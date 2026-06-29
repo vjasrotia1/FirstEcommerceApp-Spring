@@ -118,7 +118,8 @@ public class fakestoreproductservice implements ProductService {
         Product existingProduct=this.getSingleProduct(id);
 
 //1. map incoming update request fields to external API mirror DTO Structure
-FakeStoreProductDto fkpdupdatedpayLoad=new FakeStoreProductDto();
+        FakeStoreProductDto fkpdupdatedpayLoad=new FakeStoreProductDto();
+
         fkpdupdatedpayLoad.setCategory(updateProductRequestDto.getCategory());
         fkpdupdatedpayLoad.setTitle(updateProductRequestDto.getTitle());
         fkpdupdatedpayLoad.setDescription(updateProductRequestDto.getDescription());
@@ -138,26 +139,26 @@ FakeStoreProductDto fkpdupdatedpayLoad=new FakeStoreProductDto();
 
         FakeStoreProductDto updatedfkstoreproduct=responseEntity.getBody();
         if(updatedfkstoreproduct==null){
-            throw new ProductNotfoundException("Product with "+ id+ " could not be updated");
+            throw new ProductNotfoundException("Product with "+ id+ " could not be replaced");
         }
-Product nativeProduct= updatedfkstoreproduct.getProduct();
-        nativeProduct.setId(id);
 
         String targetCategoryName = updateProductRequestDto.getCategory();
-        Optional<Category> existingCategory1 = categoryRepo.findByName(targetCategoryName);
 
-        Category finalCategory;
-        if(existingCategory1.isPresent()){
-            finalCategory=existingCategory1.get();
-        }
-        else{
-            Category newCat=new Category();
-            newCat.setName(targetCategoryName);
-            finalCategory=categoryRepo.save(newCat);
-        }
-        nativeProduct.setCategory(finalCategory);
-        Product updatedProduct=productRepo.save(nativeProduct);
-        return updatedProduct;
+        Category finalCategory=categoryRepo.findByName(updateProductRequestDto.getCategory())
+                .orElseGet(() -> {
+                    Category newCat=new Category();
+                    newCat.setName(targetCategoryName);
+                    return categoryRepo.save(newCat);
+                });
+
+        existingProduct.setCategory(finalCategory);
+        existingProduct.setTitle(updateProductRequestDto.getTitle());
+        existingProduct.setDescription(updateProductRequestDto.getDescription());
+        existingProduct.setPrice(updateProductRequestDto.getPrice());
+        existingProduct.setImageUrl(updateProductRequestDto.getImage());
+        //existingProduct.setId(id);
+
+        return productRepo.save(existingProduct);
 
     }
 

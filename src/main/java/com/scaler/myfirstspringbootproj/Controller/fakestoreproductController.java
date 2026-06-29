@@ -1,4 +1,4 @@
-package com.scaler.myfirstspringbootproj.ProductController;
+package com.scaler.myfirstspringbootproj.Controller;
 
 
 import com.scaler.myfirstspringbootproj.DTO.CreateProductRequestDto;
@@ -6,7 +6,6 @@ import com.scaler.myfirstspringbootproj.DTO.UpdateProductRequestDto;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.ProductNotfoundException;
 import com.scaler.myfirstspringbootproj.Service.ProductService;
 import com.scaler.myfirstspringbootproj.models.Product;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

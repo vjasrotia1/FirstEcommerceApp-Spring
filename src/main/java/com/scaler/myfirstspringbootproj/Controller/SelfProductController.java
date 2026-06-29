@@ -1,4 +1,4 @@
-package com.scaler.myfirstspringbootproj.ProductController;
+package com.scaler.myfirstspringbootproj.Controller;
 
 
 import org.springframework.web.bind.annotation.RestController;

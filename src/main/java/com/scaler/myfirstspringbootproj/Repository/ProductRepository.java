@@ -3,7 +3,7 @@ package com.scaler.myfirstspringbootproj.Repository;
 import com.scaler.myfirstspringbootproj.models.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepo extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
     //this will insert records in my product table in my DB
     Product save(Product product);

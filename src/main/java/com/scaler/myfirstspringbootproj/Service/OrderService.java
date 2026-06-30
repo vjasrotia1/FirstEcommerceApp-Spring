@@ -3,10 +3,12 @@ package com.scaler.myfirstspringbootproj.Service;
 
 
 import com.scaler.myfirstspringbootproj.DTO.createNewOrderRequest;
+import com.scaler.myfirstspringbootproj.ExceptionHandling.CartNotFoundException;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.OrderNotFoundException;
+import com.scaler.myfirstspringbootproj.ExceptionHandling.UserNotFoundException;
 import com.scaler.myfirstspringbootproj.Repository.CartRepository;
 import com.scaler.myfirstspringbootproj.Repository.OrderRepository;
-import com.scaler.myfirstspringbootproj.Repository.ProductRepo;
+import com.scaler.myfirstspringbootproj.Repository.ProductRepository;
 import com.scaler.myfirstspringbootproj.Repository.UserRepository;
 import com.scaler.myfirstspringbootproj.models.*;
 import org.springframework.stereotype.Service;
@@ -20,17 +22,17 @@ public class OrderService {
 
     private OrderRepository orderRepository;
     private UserRepository userRepository;
-    private ProductRepo productRepo;
+    private ProductRepository productRepository;
     private CartRepository cartRepository;
     private CouponService couponService;
 
 
 
     public OrderService(OrderRepository orderRepository, UserRepository userRepository,
-                        ProductRepo productRepo, CartRepository cartRepository, CouponService couponService) {
+                        ProductRepository productRepository, CartRepository cartRepository, CouponService couponService) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
-        this.productRepo = productRepo;
+        this.productRepository = productRepository;
         this.cartRepository = cartRepository;
         this.couponService = couponService;
 
@@ -58,37 +60,51 @@ public List<Order> getAllOrdersforaUserId(Long  userId){
 
 //get current user
         User user= userRepository.findById(createNewOrderRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("user not found"));
+                .orElseThrow(() -> new UserNotFoundException("user not found"));
 
         //2.  get cart
-        Cart cart=cartRepository.findById(createNewOrderRequest.getCartId())
-                .orElseThrow(() -> new RuntimeException("cart not found"));
+        Cart cart=cartRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new CartNotFoundException("cart not found"));
+
+        //3.a
+        Order newOrder =new Order();
+        newOrder.setUser(user);
+        newOrder.setOrderStatus(OrderStatus.CREATED);
+
+
+            //4. calculate amount
+        double totalamount=0;
 
         //3. get products from cart
-        List<Product> products=cart.getProducts();
+        List<CartItem> cartItems=cart.getCartItems();
 
-        //4. calculate amount
-        double totalamount=0;
-        for(Product product:products){
-            totalamount+=product.getPrice();
+
+//convert cartItems to Order Items
+        for(CartItem cartItem:cartItems){
+
+            OrderItem orderitem = new OrderItem();
+
+            Product product=cartItem.getProduct();
+            Integer quantity=cartItem.getQuantity();
+            totalamount+=product.getPrice() * quantity;
+
+            OrderItem orderItem=new OrderItem();
+            orderItem.setProduct(product);
+            orderItem.setQuantity(quantity);
+            orderitem.setPriceAtpurchase(product.getPrice());
+            orderItem.setOrder(newOrder);
+
+            newOrder.getOrderItems().add(orderItem);
         }
+        newOrder.setAmount(totalamount);
 
         //5. apply coupon
         if(createNewOrderRequest.getCouponCode()!=null){
             totalamount= couponService.applyCoupon(totalamount, createNewOrderRequest.getCouponCode());
         }
 
-        //6. create order object
-        Order newOrder =new Order();
-        newOrder.setUser(user);
-        newOrder.setProducts(products);
-        newOrder.setAmount(totalamount);
-        newOrder.setOrderStatus(OrderStatus.CREATED);
-
-
         //7. save to database
-        Order savedOrder=orderRepository.save(newOrder);
-        return savedOrder;
+        return orderRepository.save(newOrder);
 
     }
 

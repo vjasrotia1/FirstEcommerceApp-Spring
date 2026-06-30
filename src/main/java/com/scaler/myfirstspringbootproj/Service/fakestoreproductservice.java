@@ -5,8 +5,8 @@ import com.scaler.myfirstspringbootproj.DTO.CreateProductRequestDto;
 import com.scaler.myfirstspringbootproj.DTO.FakeStoreProductDto;
 import com.scaler.myfirstspringbootproj.DTO.UpdateProductRequestDto;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.ProductNotfoundException;
-import com.scaler.myfirstspringbootproj.Repository.CategoryRepo;
-import com.scaler.myfirstspringbootproj.Repository.ProductRepo;
+import com.scaler.myfirstspringbootproj.Repository.CategoryRepository;
+import com.scaler.myfirstspringbootproj.Repository.ProductRepository;
 
 import com.scaler.myfirstspringbootproj.models.Category;
 import com.scaler.myfirstspringbootproj.models.Product;
@@ -25,15 +25,15 @@ import java.util.Optional;
 public class fakestoreproductservice implements ProductService {
 
     private RestTemplate restTemplate;
-    private CategoryRepo categoryRepo;
-    private ProductRepo productRepo;
+    private CategoryRepository categoryRepository;
+    private ProductRepository productRepository;
 
 
 
-    public fakestoreproductservice(RestTemplate restTemplate, CategoryRepo categoryRepo, ProductRepo productRepo) {
+    public fakestoreproductservice(RestTemplate restTemplate, CategoryRepository categoryRepository, ProductRepository productRepository) {
         this.restTemplate = restTemplate;
-        this.categoryRepo = categoryRepo;
-        this.productRepo = productRepo;
+        this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
 
@@ -66,7 +66,7 @@ public class fakestoreproductservice implements ProductService {
         String targetcategoryName = requestDto.getCategoryName();
 
         //5. check if category already exists in your local database
-        Optional<Category> existingCategory = categoryRepo.findByName(targetcategoryName);
+        Optional<Category> existingCategory = categoryRepository.findByName(targetcategoryName);
 
         Category finalCategory;
         if(existingCategory.isPresent()){
@@ -77,13 +77,13 @@ public class fakestoreproductservice implements ProductService {
             //create a new record, populate it and save it
             Category newCat=new Category();
             newCat.setName(targetcategoryName);
-            finalCategory=categoryRepo.save(newCat);
+            finalCategory= categoryRepository.save(newCat);
         }
 
         //5. linking the existing or newly saved category to your native product
         nativeProduct.setCategory(finalCategory);
 //6. Synchronise state by persisting the final structured record inside your DB
-        return productRepo.save(nativeProduct);
+        return productRepository.save(nativeProduct);
     }
 
     @Override
@@ -144,11 +144,11 @@ public class fakestoreproductservice implements ProductService {
 
         String targetCategoryName = updateProductRequestDto.getCategory();
 
-        Category finalCategory=categoryRepo.findByName(updateProductRequestDto.getCategory())
+        Category finalCategory= categoryRepository.findByName(updateProductRequestDto.getCategory())
                 .orElseGet(() -> {
                     Category newCat=new Category();
                     newCat.setName(targetCategoryName);
-                    return categoryRepo.save(newCat);
+                    return categoryRepository.save(newCat);
                 });
 
         existingProduct.setCategory(finalCategory);
@@ -158,7 +158,7 @@ public class fakestoreproductservice implements ProductService {
         existingProduct.setImageUrl(updateProductRequestDto.getImage());
         //existingProduct.setId(id);
 
-        return productRepo.save(existingProduct);
+        return productRepository.save(existingProduct);
 
     }
 
@@ -193,11 +193,11 @@ public class fakestoreproductservice implements ProductService {
             patchPayload.setCategory(PatchProductRequestDto.getCategory());
 
             String targetCategoryName = PatchProductRequestDto.getCategory();
-            Category verifiedCategory = categoryRepo.findByName(targetCategoryName)
+            Category verifiedCategory = categoryRepository.findByName(targetCategoryName)
                     .orElseGet(() -> {
                         Category newCat = new Category();
                         newCat.setName(targetCategoryName);
-                        return categoryRepo.save(newCat);
+                        return categoryRepository.save(newCat);
                     });
             existingProd.setCategory(verifiedCategory);
         }
@@ -215,7 +215,7 @@ public class fakestoreproductservice implements ProductService {
         //step 5 : save to local repo
         //explicitly maintain the request path id to lock relational consistency
             existingProd.setId(id);
-        return productRepo.save(existingProd);
+        return productRepository.save(existingProd);
     }
 
     @Override

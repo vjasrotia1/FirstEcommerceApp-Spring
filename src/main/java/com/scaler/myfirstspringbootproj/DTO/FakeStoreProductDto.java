@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class FakeStoreProductDto {
 //these fields should be similar to the names of the  "fields" of fakestoreapi.com
-    private Long id;
+    //private Long id;
     private String title;
     private String category;
     private Double price;
@@ -21,7 +21,7 @@ public class FakeStoreProductDto {
     //this will convert the fakestore product to product of  my implementation
     public Product getProduct() {
 Product p=new  Product();
-p.setId(this.id);
+//p.setId(this.id);
 p.setTitle(this.title);
 p.setDescription(this.description);
 p.setPrice(this.price);
@@ -37,8 +37,7 @@ return p;
     @Override
     public String toString() {
         return "FakeStoreProductDto{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
+                "title='" + title + '\'' +
                 ", category='" + category + '\'' +
                 ", price=" + price +
                 ", description='" + description + '\'' +

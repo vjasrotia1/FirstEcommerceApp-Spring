@@ -1,6 +1,7 @@
 package com.scaler.myfirstspringbootproj.DTO;
 
 
+import com.scaler.myfirstspringbootproj.models.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +11,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class CreatePaymentRequest {
 
-    private String userName;
-    private String email;
-    private String gender;
+    private Long OrderId;
+    private PaymentMethod paymentMethod;
+
 }

@@ -2,7 +2,7 @@ package com.scaler.myfirstspringbootproj.Service;
 
 import com.scaler.myfirstspringbootproj.DTO.CreateNewCategoryRequest;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.CategoryNotFoundException;
-import com.scaler.myfirstspringbootproj.Repository.CategoryRepo;
+import com.scaler.myfirstspringbootproj.Repository.CategoryRepository;
 import com.scaler.myfirstspringbootproj.models.Category;
 import org.springframework.stereotype.Service;
 
@@ -11,16 +11,16 @@ import java.util.List;
 @Service
 public class CategoryService {
 
-    private CategoryRepo categoryRepo;
+    private CategoryRepository categoryRepository;
 
-    public CategoryService(CategoryRepo categoryRepo) {
-        this.categoryRepo = categoryRepo;
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
     }
 
     //get single category
 
     public Category getSingleCategory(Long id) throws CategoryNotFoundException {
-        Category finalcategory=categoryRepo.findById(id)
+        Category finalcategory= categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("category not found in our DB"));
         return finalcategory;
 
@@ -28,7 +28,7 @@ public class CategoryService {
     //get all categories
 
     public List<Category> getAllCategories() {
-        List<Category> categories=categoryRepo.findAll();
+        List<Category> categories= categoryRepository.findAll();
         return categories;
     }
 
@@ -39,7 +39,7 @@ public class CategoryService {
         Category newCategory=new Category();
 
         newCategory.setName(createNewCategoryRequest.getCategoryName());
-        return categoryRepo.save(newCategory);
+        return categoryRepository.save(newCategory);
     }
 
     //update a category

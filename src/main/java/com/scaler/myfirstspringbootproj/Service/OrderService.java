@@ -58,11 +58,11 @@ public List<Order> getAllOrdersforaUserId(Long  userId){
 
     public Order createOrder(createNewOrderRequest createNewOrderRequest) {
 
-//get current user
+//get current user of find user passed by FE
         User user= userRepository.findById(createNewOrderRequest.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("user not found"));
 
-        //2.  get cart
+        //2.  get cart of the user
         Cart cart=cartRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new CartNotFoundException("cart not found"));
 
@@ -75,14 +75,13 @@ public List<Order> getAllOrdersforaUserId(Long  userId){
             //4. calculate amount
         double totalamount=0;
 
-        //3. get products from cart
+        //3. get cartItems from this cart
         List<CartItem> cartItems=cart.getCartItems();
 
 
 //convert cartItems to Order Items
         for(CartItem cartItem:cartItems){
 
-            OrderItem orderitem = new OrderItem();
 
             Product product=cartItem.getProduct();
             Integer quantity=cartItem.getQuantity();
@@ -91,7 +90,7 @@ public List<Order> getAllOrdersforaUserId(Long  userId){
             OrderItem orderItem=new OrderItem();
             orderItem.setProduct(product);
             orderItem.setQuantity(quantity);
-            orderitem.setPriceAtpurchase(product.getPrice());
+            orderItem.setPriceAtpurchase(product.getPrice());
             orderItem.setOrder(newOrder);
 
             newOrder.getOrderItems().add(orderItem);

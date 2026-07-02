@@ -72,6 +72,10 @@ public class StripePaymentService implements PaymentService {
                                         .setQuantity(1L)
                                         .build()
                         )
+                        .putMetadata(
+                                "orderId",String.valueOf(order.getId())
+                        )
+                        //below is kind of functional callback
                         .setAfterCompletion(
                                 PaymentLinkCreateParams.AfterCompletion.builder()
                                         .setType(PaymentLinkCreateParams.AfterCompletion.Type.REDIRECT)

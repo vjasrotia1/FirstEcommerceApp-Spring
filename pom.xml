@@ -75,13 +75,13 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- Source: https://mvnrepository.com/artifact/com.stripe/stripe-java -->
-        <dependency>
-            <groupId>com.stripe</groupId>
-            <artifactId>stripe-java</artifactId>
-            <version>33.2.0-beta.1</version>
-            <scope>compile</scope>
-        </dependency>
+                <!-- Source: https://mvnrepository.com/artifact/com.stripe/stripe-java -->
+                <dependency>
+                    <groupId>com.stripe</groupId>
+                    <artifactId>stripe-java</artifactId>
+                    <version>30.1.0</version>
+                    <scope>compile</scope>
+                </dependency>
 
 
     </dependencies>

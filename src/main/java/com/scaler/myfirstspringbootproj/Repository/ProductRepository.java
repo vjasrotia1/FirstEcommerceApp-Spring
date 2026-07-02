@@ -3,6 +3,9 @@ package com.scaler.myfirstspringbootproj.Repository;
 import com.scaler.myfirstspringbootproj.models.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     //this will insert records in my product table in my DB
@@ -16,7 +19,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Product findByDescription(String description);
 
-
-
-
+    @Override
+    List<Product> findAll();
 }

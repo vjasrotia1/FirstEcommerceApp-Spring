@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CategoryService {
+public class SelfCategoryService implements categoryService {
 
     private CategoryRepository categoryRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public SelfCategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
@@ -32,9 +32,11 @@ public class CategoryService {
         return categories;
     }
 
+
+
     //create a new category
 
-    public Category createCategory(CreateNewCategoryRequest  createNewCategoryRequest){
+    public Category createNewCategory(CreateNewCategoryRequest  createNewCategoryRequest){
 
         Category newCategory=new Category();
 

@@ -2,7 +2,7 @@ package com.scaler.myfirstspringbootproj.Service;
 
 import com.scaler.myfirstspringbootproj.DTO.AddCartItemRequestDto;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.CartNotFoundException;
-import com.scaler.myfirstspringbootproj.ExceptionHandling.ProductNotfoundException;
+import com.scaler.myfirstspringbootproj.ExceptionHandling.ProductNotFoundException;
 import com.scaler.myfirstspringbootproj.Repository.CartItemRepository;
 import com.scaler.myfirstspringbootproj.Repository.CartRepository;
 import com.scaler.myfirstspringbootproj.Repository.ProductRepository;
@@ -24,13 +24,13 @@ public CartService(CartItemRepository cartItemRepository, CartRepository cartRep
     this.productRepository = productRepository;
 }
 
-public CartItem addItemToCart(Long cartId, AddCartItemRequestDto  addCartItemRequestDto) throws ProductNotfoundException {
+public CartItem addItemToCart(Long cartId, AddCartItemRequestDto  addCartItemRequestDto) throws ProductNotFoundException {
 
     Cart cart= cartRepository.findById(cartId)
             .orElseThrow(() -> new CartNotFoundException("Cart not found"));
 
     Product product = productRepository.findById(addCartItemRequestDto.getProductId())
-            .orElseThrow(() -> new ProductNotfoundException("no product found"));
+            .orElseThrow(() -> new ProductNotFoundException("no product found"));
 
 CartItem cartItem=new CartItem();
 

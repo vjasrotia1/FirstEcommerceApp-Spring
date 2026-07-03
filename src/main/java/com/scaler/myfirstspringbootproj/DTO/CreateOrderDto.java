@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CreateOrderDto {
 
-    private Long userId;
+    //private Long userId;
     private Long cartId;
     private Long shippingAddressId;
     private PaymentMethod PaymentMethod;

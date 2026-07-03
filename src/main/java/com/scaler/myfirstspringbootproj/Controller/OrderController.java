@@ -1,6 +1,7 @@
 package com.scaler.myfirstspringbootproj.Controller;
 
 import com.scaler.myfirstspringbootproj.DTO.CreateOrderDto;
+import com.scaler.myfirstspringbootproj.DTO.ErrorDto;
 import com.scaler.myfirstspringbootproj.DTO.createNewOrderRequest;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.OrderNotFoundException;
 import com.scaler.myfirstspringbootproj.Service.OrderService;
@@ -46,9 +47,10 @@ public OrderController(OrderService orderService){
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody CreateOrderDto createOrderDto) {
+        //System.out.println(createOrderDto.getCartId());
 
     createNewOrderRequest createNewOrderRequest = new  createNewOrderRequest(
-            createOrderDto.getUserId(),
+            //createOrderDto.getUserId(),
             createOrderDto.getCartId(),
             createOrderDto.getShippingAddressId(),
             createOrderDto.getPaymentMethod(),
@@ -64,5 +66,15 @@ public OrderController(OrderService orderService){
     //update order
 
     //delete order
+
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleOrderNotFoundException(Exception e){
+        ErrorDto errorDTO;
+        errorDTO = new ErrorDto();
+        errorDTO.setMessage(e.getMessage());
+
+        return new ResponseEntity<>(errorDTO, HttpStatus.NOT_FOUND);
+    }
 
 }

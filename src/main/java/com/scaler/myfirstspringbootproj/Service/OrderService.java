@@ -58,17 +58,17 @@ public List<Order> getAllOrdersforaUserId(Long  userId){
 
     public Order createOrder(createNewOrderRequest createNewOrderRequest) {
 
-//get current user of find user passed by FE
-        User user= userRepository.findById(createNewOrderRequest.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("user not found"));
+        //get current user of find user passed by FE
+//        User user= userRepository.findById(createNewOrderRequest.getUserId())
+//                .orElseThrow(() -> new UserNotFoundException("user not found"));
 
         //2.  get cart of the user
-        Cart cart=cartRepository.findByUserId(user.getId())
+        Cart cart=cartRepository.findById(createNewOrderRequest.getCartId())
                 .orElseThrow(() -> new CartNotFoundException("cart not found"));
 
         //3.a
         Order newOrder =new Order();
-        newOrder.setUser(user);
+        newOrder.setUser(cart.getUser());
         newOrder.setOrderStatus(OrderStatus.CREATED);
 
 

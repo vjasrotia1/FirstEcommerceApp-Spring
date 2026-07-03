@@ -4,13 +4,14 @@ package com.scaler.myfirstspringbootproj.Service;
 import com.scaler.myfirstspringbootproj.DTO.CreateProductRequestDto;
 import com.scaler.myfirstspringbootproj.DTO.FakeStoreProductDto;
 import com.scaler.myfirstspringbootproj.DTO.UpdateProductRequestDto;
-import com.scaler.myfirstspringbootproj.ExceptionHandling.ProductNotfoundException;
+import com.scaler.myfirstspringbootproj.ExceptionHandling.ProductNotFoundException;
 import com.scaler.myfirstspringbootproj.Repository.CategoryRepository;
 import com.scaler.myfirstspringbootproj.Repository.ProductRepository;
 
 import com.scaler.myfirstspringbootproj.models.Category;
 import com.scaler.myfirstspringbootproj.models.Product;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -87,19 +88,19 @@ public class fakestoreproductservice implements ProductService {
     }
 
     @Override
-    public Product getSingleProduct(Long id) throws ProductNotfoundException {
+    public Product getSingleProduct(Long id) throws ProductNotFoundException {
         FakeStoreProductDto fkpd=restTemplate.getForObject(
                 "https://fakestoreapi.com/products/"+id,FakeStoreProductDto.class
         );
 
         if(fkpd==null){
-            throw new ProductNotfoundException("Product not found with id "+id);
+            throw new ProductNotFoundException("Product not found with id "+id);
         }
         return fkpd.getProduct();
     }
 
     @Override
-    public List<Product> getAllProducts() {
+    public Page<Product> getAllProducts(int pageNumber, int pageSize, String fieldName) {
         List<Product> products=new ArrayList<>();
         FakeStoreProductDto[] fakeStoreProductDtoarray = restTemplate.getForObject(
                 "https://fakestoreapi.com/products",FakeStoreProductDto[].class);
@@ -109,11 +110,11 @@ public class fakestoreproductservice implements ProductService {
                 products.add(fkspdto.getProduct());
             }
         }
-        return products;
+        return null;
     }
 
     @Override //PUT request change all the details of a given product
-    public Product UpdateProduct(Long id, UpdateProductRequestDto updateProductRequestDto) throws ProductNotfoundException {
+    public Product UpdateProduct(Long id, UpdateProductRequestDto updateProductRequestDto) throws ProductNotFoundException {
 
         Product existingProduct=this.getSingleProduct(id);
 
@@ -139,7 +140,7 @@ public class fakestoreproductservice implements ProductService {
 
         FakeStoreProductDto updatedfkstoreproduct=responseEntity.getBody();
         if(updatedfkstoreproduct==null){
-            throw new ProductNotfoundException("Product with "+ id+ " could not be replaced");
+            throw new ProductNotFoundException("Product with "+ id+ " could not be replaced");
         }
 
         String targetCategoryName = updateProductRequestDto.getCategory();
@@ -163,7 +164,7 @@ public class fakestoreproductservice implements ProductService {
     }
 
     @Override
-    public Product PatchProduct(Long id, UpdateProductRequestDto PatchProductRequestDto) throws ProductNotfoundException {
+    public Product PatchProduct(Long id, UpdateProductRequestDto PatchProductRequestDto) throws ProductNotFoundException {
 
         //step 1 : existence check, reuse getSingleProduct() method
         //if product doesnot exist, it throws productnotfoundexception and stops further execution
@@ -219,7 +220,7 @@ public class fakestoreproductservice implements ProductService {
     }
 
     @Override
-    public void deleteProduct(Long id) throws ProductNotfoundException {
+    public void deleteProduct(Long id) throws ProductNotFoundException {
         //if product is not in fakestore, throw error
             getSingleProduct(id);
             restTemplate.delete("https://fakestoreapi.com/products/"+id);

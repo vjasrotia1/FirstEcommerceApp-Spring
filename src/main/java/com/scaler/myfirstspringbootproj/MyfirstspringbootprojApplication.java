@@ -2,6 +2,7 @@ package com.scaler.myfirstspringbootproj;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 
 //Project 1 (Keep): Ecommerce Platform
@@ -30,6 +31,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
+//@EnableCaching
+//enableCaching tells spring that
+// "Whenever you see caching annotations, activate them."
 public class MyfirstspringbootprojApplication {
 
     public static void main(String[] args) {

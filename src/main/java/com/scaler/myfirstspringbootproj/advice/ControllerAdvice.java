@@ -2,7 +2,7 @@ package com.scaler.myfirstspringbootproj.advice;
 
 
 import com.scaler.myfirstspringbootproj.DTO.ErrorDto;
-import com.scaler.myfirstspringbootproj.ExceptionHandling.ProductNotfoundException;
+import com.scaler.myfirstspringbootproj.ExceptionHandling.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ControllerAdvice {
 
 
-    @ExceptionHandler(ProductNotfoundException.class)
-    public ResponseEntity<ErrorDto> handleProductNotFoundException(Exception e) {
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleProductNotFoundException(ProductNotFoundException e) {
         ErrorDto errorDto=new ErrorDto();
         errorDto.setMessage(e.getMessage());
 

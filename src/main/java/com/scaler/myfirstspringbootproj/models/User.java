@@ -16,6 +16,8 @@ public class User extends BaseModel{
     private String username;
     private String email;
     private String gender;
+    private String password;
+
 
     @Override
     public String toString() {
@@ -23,6 +25,7 @@ public class User extends BaseModel{
                 "username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", gender='" + gender + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

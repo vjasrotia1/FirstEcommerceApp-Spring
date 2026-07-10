@@ -145,7 +145,7 @@ public class fakestoreproductservice implements ProductService {
 
         String targetCategoryName = updateProductRequestDto.getCategory();
 
-        Category finalCategory= categoryRepository.findByName(updateProductRequestDto.getCategory())
+        Category finalCategory= categoryRepository.findByName(targetCategoryName)
                 .orElseGet(() -> {
                     Category newCat=new Category();
                     newCat.setName(targetCategoryName);
@@ -153,10 +153,10 @@ public class fakestoreproductservice implements ProductService {
                 });
 
         existingProduct.setCategory(finalCategory);
-        existingProduct.setTitle(updateProductRequestDto.getTitle());
-        existingProduct.setDescription(updateProductRequestDto.getDescription());
-        existingProduct.setPrice(updateProductRequestDto.getPrice());
-        existingProduct.setImageUrl(updateProductRequestDto.getImage());
+        existingProduct.setTitle(updatedfkstoreproduct.getTitle());
+        existingProduct.setDescription(updatedfkstoreproduct.getDescription());
+        existingProduct.setPrice(updatedfkstoreproduct.getPrice());
+        existingProduct.setImageUrl(updatedfkstoreproduct.getImage());
         //existingProduct.setId(id);
 
         return productRepository.save(existingProduct);

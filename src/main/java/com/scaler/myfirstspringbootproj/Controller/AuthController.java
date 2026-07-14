@@ -11,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,7 +22,7 @@ public class AuthController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDto> UsersignUp(@RequestBody SignUpRequestDto signUpRequestDto) {
+    public ResponseEntity<UserResponseDto> userSignUp(@RequestBody SignUpRequestDto signUpRequestDto) {
 
         try{
             User user=authService.SignUp(signUpRequestDto.getEmail(),
@@ -38,10 +35,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-public ResponseEntity<LoginResponseDto> Userlogin(@RequestBody LoginRequestDto loginRequestDto){
-        LoginResponseDto loginResponseDto=authService.Login(loginRequestDto.getEmail(),loginRequestDto.getPassword());
+public ResponseEntity<LoginResponseDto> userLogin(@RequestBody LoginRequestDto loginRequestDto){
+        LoginResponseDto loginResponseDto=authService.login(loginRequestDto.getEmail(),loginRequestDto.getPassword());
 
-        return new ResponseEntity<>(loginResponseDto,HttpStatus.OK);
+MultiValueMap<String,String> headers=new LinkedMultiValueMap<>();
+headers.add(HttpHeaders.SET_COOKIE,loginResponseDto.getAccessToken());
+
+        return new ResponseEntity<>(loginResponseDto,headers,HttpStatus.OK);
 }
 
 //ye API sirf token verify karegi
@@ -63,6 +63,35 @@ public ResponseEntity<LoginResponseDto> Userlogin(@RequestBody LoginRequestDto l
         String accessToken = authService.refreshAccessToken(refreshTokenRequestDto.getRefreshToken());
 
         return ResponseEntity.ok(accessToken);
+    }
+
+    @PostMapping("/logout")
+    //in this API, client has to send 2 things
+    //1. Access Token(in header)
+    //2. Refresh Token(in the requestBody)
+    //because Access token in stored in UserSession table
+    //and refresh token is saved in Refresh Token Table
+    //and at the time of logout, we have to delete both
+
+    //logout me 2 hi possibilities hai
+    //1. success (200 OK) or exception(401 UNAUTHORISED)
+    public ResponseEntity<String> UserLogOut (
+            @RequestHeader("Authorization") String accessToken,
+            @RequestBody LogOutRequestDto logOutRequestDto) {
+
+
+        authService.logoutUser(accessToken,logOutRequestDto.getRefreshToken());
+
+        return new ResponseEntity<>("U have Successfully Logged Out", HttpStatus.OK);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(
+            @RequestBody ForgotPasswordRequestDto requestDto){
+
+        authService.forgotPassword(requestDto.getEmail());
+
+        return ResponseEntity.ok("Password Reset Link Sent Successfully");
 
     }
 

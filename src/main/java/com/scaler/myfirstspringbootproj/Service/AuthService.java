@@ -5,18 +5,15 @@ import com.scaler.myfirstspringbootproj.DTO.TokenValidationResult;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.PasswordMismatchException;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.UserAlreadyExistsException;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.UserNotFoundException;
+import com.scaler.myfirstspringbootproj.Repository.PasswordResetTokenRepository;
 import com.scaler.myfirstspringbootproj.Repository.RefreshTokenRepository;
 import com.scaler.myfirstspringbootproj.Repository.UserRepository;
 import com.scaler.myfirstspringbootproj.Repository.UserSessionRepository;
 import com.scaler.myfirstspringbootproj.Utils.UserMapperUtil;
-import com.scaler.myfirstspringbootproj.models.RefreshToken;
-import com.scaler.myfirstspringbootproj.models.Role;
-import com.scaler.myfirstspringbootproj.models.User;
-import com.scaler.myfirstspringbootproj.models.UserSession;
+import com.scaler.myfirstspringbootproj.models.*;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
@@ -27,7 +24,6 @@ import java.util.UUID;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.security.MacAlgorithm;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -49,6 +45,9 @@ public class AuthService {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
+    @Autowired
+    private PasswordResetTokenRepository  passwordResetTokenRepository;
+
     //USer signup logic
     @Transactional
     public User SignUp(String email, String password){
@@ -68,7 +67,7 @@ public class AuthService {
 
     //User login logic
     @Transactional
-    public LoginResponseDto Login(String email, String password){
+    public LoginResponseDto login(String email, String password){
         User existingUser= userRepository.findByEmailEquals(email)
                 .orElseThrow(
                         () -> new UserNotFoundException("No User found with this email address, please SignUp first")
@@ -206,6 +205,89 @@ public TokenValidationResult validateToken(String token){
 
 
         return newAccessToken;
+    }
+
+
+    public void logoutUser(String accessToken, String refreshToken){
+// Remove "Bearer " from Authorization header
+        if(accessToken.startsWith("Bearer ")){
+            accessToken = accessToken.substring(7);
+        }
+//validate or verify access token
+        TokenValidationResult tokenValidationResult = validateToken(accessToken);
+
+        if(!tokenValidationResult.isValid()){
+            throw new RuntimeException("Invalid Access Token");
+        }
+
+        //check refresh Token
+
+        RefreshToken refreshTokenEntity = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(
+                        ()->new RuntimeException("Invalid Refresh Token")
+                );
+
+        // Optional Security Check
+        if (!refreshTokenEntity.getUser().getId().equals(tokenValidationResult.getUserId())) {
+            throw new RuntimeException(
+                    "Access Token and Refresh Token belong to different users");
+        }
+
+        //delete access Token
+        userSessionRepository.deleteByToken(accessToken);
+
+        //delete refresh Token
+        refreshTokenRepository.deleteByToken(refreshToken);
+
+
+        //production level improvement
+        //if user is logged in via Mobile,Laptop,ipad and logs out on Mobile
+        //so only access token and refresh token of Mobile should get deleted and not of Laptop and ipad
+        //Isliye production me deleteByToken() bahut achha design hai, kyunki ye specific session ko logout karta hai.
+        //Baad me agar tum "Logout from All Devices" implement karna chaho, to naya repository method bana sakte ho:
+        //e.g. void deleteByUser(user user) or void deleteAllByUser_Id(Long userId)
+        //Isse ek hi query me us user ke saare access tokens aur saare refresh tokens delete ho jayenge.
+        // Ye feature Google, Facebook aur banking apps me bhi milta hai ("Sign out of all devices").
+    }
+
+    public void forgotPassword(String email) {
+
+
+
+        // Check whether user exists
+        User user = userRepository.findByEmailEquals(email)
+                .orElseThrow(() ->
+                        new UserNotFoundException("User not found"));
+
+        passwordResetTokenRepository
+                .findByUserAndUsedFalse(user)
+                .ifPresent(existing -> {
+                    existing.setUsed(true);
+                    passwordResetTokenRepository.save(existing);
+                });
+
+        // Generate Reset Token
+        String token = UUID.randomUUID().toString();
+
+        // Create PasswordResetToken object
+        PasswordResetToken passwordResetToken =
+                new PasswordResetToken();
+
+        passwordResetToken.setUser(user);
+        passwordResetToken.setToken(token);
+
+        // Valid for 1 hour
+        passwordResetToken.setExpiryTime(
+                System.currentTimeMillis() + (60 * 60 * 1000)
+        );
+
+        passwordResetToken.setUsed(false);
+
+        // Save in database
+        passwordResetTokenRepository.save(passwordResetToken);
+
+        // TODO
+        // Send Email
     }
 
 }

@@ -14,4 +14,6 @@ public interface UserSessionRepository extends JpaRepository<UserSession,Long> {
     //UserSession class me token aur user naam k fields hai aur User class k andar id naam ka ek field hai
     //spring JPA isko user.id ki tarah samjhta hai
     Optional<UserSession> findByToken(String token);
+
+    void deleteByToken(String token);
 }

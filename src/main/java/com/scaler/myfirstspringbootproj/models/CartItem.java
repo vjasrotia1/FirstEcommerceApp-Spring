@@ -24,7 +24,7 @@ public class CartItem extends BaseModel {
 
     @ManyToOne
     private Cart cart;
-
+    //one product can be part of many cartItems, but 1 cartItem can relate to one product only
     @ManyToOne
     private Product product;
 

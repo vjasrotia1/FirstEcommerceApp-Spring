@@ -14,7 +14,7 @@ public class OrderItem extends BaseModel {
 
     @ManyToOne
     private Order order;
-
+//one product can be part of many orderItems, but 1 orderItem can relate to one product only
     @ManyToOne
     private Product product;
 

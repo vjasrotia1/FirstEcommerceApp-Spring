@@ -28,7 +28,8 @@ public class UserController {
                 userDto.getUserName(),
                 userDto.getEmail(),
                 userDto.getGender(),
-                userDto.getPassword()
+                userDto.getPassword(),
+                userDto.getRole()
         );
 
         User user = userService.createUser(createUserRequest);

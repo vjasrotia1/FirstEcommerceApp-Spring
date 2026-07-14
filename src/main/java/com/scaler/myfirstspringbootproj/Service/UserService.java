@@ -5,6 +5,7 @@ import com.scaler.myfirstspringbootproj.ExceptionHandling.UserNotFoundException;
 import com.scaler.myfirstspringbootproj.Repository.CartRepository;
 import com.scaler.myfirstspringbootproj.Repository.UserRepository;
 import com.scaler.myfirstspringbootproj.models.Cart;
+import com.scaler.myfirstspringbootproj.models.Role;
 import com.scaler.myfirstspringbootproj.models.State;
 import com.scaler.myfirstspringbootproj.models.User;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,8 @@ public UserService(UserRepository userRepository, CartRepository cartRepository)
                 createUserRequest.getUserName(),
                 createUserRequest.getEmail(),
                 createUserRequest.getGender(),
-                createUserRequest.getPassword()
+                createUserRequest.getPassword(),
+                Role.valueOf(createUserRequest.getRole())
         );
 
         userRepository.save(newUser);
@@ -37,8 +39,6 @@ public UserService(UserRepository userRepository, CartRepository cartRepository)
         Cart cart = new Cart();
         cart.setUser(newUser);
         cartRepository.save(cart);
-
-
         return newUser;
     }
 

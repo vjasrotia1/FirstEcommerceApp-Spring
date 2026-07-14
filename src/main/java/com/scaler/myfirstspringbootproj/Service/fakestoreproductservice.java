@@ -58,7 +58,7 @@ public class fakestoreproductservice implements ProductService {
         );
 
         if(response==null){
-            throw new RuntimeException("External Fakestore API failed to process new Product creation.");
+            throw new RuntimeException("External Fakestore API failed to process new Product creation request");
         }
 //3. Convert FakeStore response into your native internal Product object layout
         Product nativeProduct= response.getProduct();

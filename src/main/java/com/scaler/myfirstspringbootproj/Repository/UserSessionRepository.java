@@ -9,5 +9,9 @@ import java.util.Optional;
 @Repository
 public interface UserSessionRepository extends JpaRepository<UserSession,Long> {
 
-    Optional<UserSession> findByTokenAndUser_Id(String token, Long userId);
+    //underscore User_Id represents nested Property Navigation
+    //basically it means
+    //UserSession class me token aur user naam k fields hai aur User class k andar id naam ka ek field hai
+    //spring JPA isko user.id ki tarah samjhta hai
+    Optional<UserSession> findByToken(String token);
 }

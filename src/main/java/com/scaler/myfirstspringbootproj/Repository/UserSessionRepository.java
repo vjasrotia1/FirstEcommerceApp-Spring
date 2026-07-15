@@ -1,5 +1,6 @@
 package com.scaler.myfirstspringbootproj.Repository;
 
+import com.scaler.myfirstspringbootproj.models.User;
 import com.scaler.myfirstspringbootproj.models.UserSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,5 @@ public interface UserSessionRepository extends JpaRepository<UserSession,Long> {
     Optional<UserSession> findByToken(String token);
 
     void deleteByToken(String token);
+    void deleteByUser(User user);
 }

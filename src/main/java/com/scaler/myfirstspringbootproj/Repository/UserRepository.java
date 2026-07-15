@@ -12,4 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIdEquals(Long id);
 
     void deleteByEmailEquals(String email);
+
+    Optional<User> findByGoogleId(String googleId);
+
 }

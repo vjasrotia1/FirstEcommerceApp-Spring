@@ -13,4 +13,5 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
     //if User clicks on forgot password 10 times, then in DB there will be 10 active RESET Tokens
     //in real world, we first invalidate old active reset tokens, for this we add few lines at start of forgotpassword method
     Optional<PasswordResetToken> findByUserAndUsedFalse(User user);
+    void deleteByUser(User user);
 }

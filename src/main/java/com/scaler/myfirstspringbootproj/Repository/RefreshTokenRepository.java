@@ -1,6 +1,7 @@
 package com.scaler.myfirstspringbootproj.Repository;
 
 import com.scaler.myfirstspringbootproj.models.RefreshToken;
+import com.scaler.myfirstspringbootproj.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +13,5 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     Optional<RefreshToken> findByToken(String token);
 
     void deleteByToken(String token);
-
+    void deleteByUser(User user);
 }

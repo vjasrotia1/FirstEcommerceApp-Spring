@@ -4,7 +4,6 @@ import com.scaler.myfirstspringbootproj.DTO.*;
 import com.scaler.myfirstspringbootproj.Service.AuthService;
 import com.scaler.myfirstspringbootproj.Utils.UserMapperUtil;
 import com.scaler.myfirstspringbootproj.models.User;
-import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -59,9 +58,7 @@ headers.add(HttpHeaders.SET_COOKIE,loginResponseDto.getAccessToken());
 
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDto){
-
         String accessToken = authService.refreshAccessToken(refreshTokenRequestDto.getRefreshToken());
-
         return ResponseEntity.ok(accessToken);
     }
 
@@ -79,7 +76,6 @@ headers.add(HttpHeaders.SET_COOKIE,loginResponseDto.getAccessToken());
             @RequestHeader("Authorization") String accessToken,
             @RequestBody LogOutRequestDto logOutRequestDto) {
 
-
         authService.logoutUser(accessToken,logOutRequestDto.getRefreshToken());
 
         return new ResponseEntity<>("U have Successfully Logged Out", HttpStatus.OK);
@@ -94,5 +90,34 @@ headers.add(HttpHeaders.SET_COOKIE,loginResponseDto.getAccessToken());
         return ResponseEntity.ok("Password Reset Link Sent Successfully");
 
     }
+
+    @PostMapping("/google-login")
+    public ResponseEntity<LoginResponseDto> googleLogin(@RequestBody GoogleLoginRequestDto dto) throws Exception {
+        LoginResponseDto response = authService.loginWithGoogle(dto.getGoogleIdToken());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @RequestBody ResetPasswordRequestDto dto){
+
+        authService.resetPassword(
+                dto.getToken(),
+                dto.getNewPassword());
+
+        return ResponseEntity.ok(
+                "Password Updated");
+    }
+
+//    @GetMapping("/verify-email")
+//    public ResponseEntity<String>
+//    verifyEmail(@RequestParam String token){
+//
+//        authService.verifyEmail(token);
+//
+//        return ResponseEntity.ok(
+//                "Email Verified");
+//    }
 
 }

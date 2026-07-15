@@ -23,5 +23,7 @@ public class CreateUserRequest {
     private String gender;
     private String password;
     private String role;
+    private String registrationProvider;
+    private String  googleId;
 
 }

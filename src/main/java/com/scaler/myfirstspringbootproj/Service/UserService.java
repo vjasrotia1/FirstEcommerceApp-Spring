@@ -4,10 +4,7 @@ import com.scaler.myfirstspringbootproj.DTO.CreateUserRequest;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.UserNotFoundException;
 import com.scaler.myfirstspringbootproj.Repository.CartRepository;
 import com.scaler.myfirstspringbootproj.Repository.UserRepository;
-import com.scaler.myfirstspringbootproj.models.Cart;
-import com.scaler.myfirstspringbootproj.models.Role;
-import com.scaler.myfirstspringbootproj.models.State;
-import com.scaler.myfirstspringbootproj.models.User;
+import com.scaler.myfirstspringbootproj.models.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,7 +27,9 @@ public UserService(UserRepository userRepository, CartRepository cartRepository)
                 createUserRequest.getEmail(),
                 createUserRequest.getGender(),
                 createUserRequest.getPassword(),
-                Role.valueOf(createUserRequest.getRole())
+                Role.valueOf(createUserRequest.getRole()),
+                LoginProvider.valueOf(createUserRequest.getRegistrationProvider()),
+                createUserRequest.getGoogleId()
         );
 
         userRepository.save(newUser);

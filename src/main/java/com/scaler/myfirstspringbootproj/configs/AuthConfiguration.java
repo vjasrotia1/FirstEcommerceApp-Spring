@@ -1,6 +1,8 @@
 package com.scaler.myfirstspringbootproj.configs;
 
 
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.MacAlgorithm;
 import org.springframework.context.annotation.Bean;
@@ -44,5 +46,15 @@ public class AuthConfiguration {
         MacAlgorithm algorithm= Jwts.SIG.HS256;
         SecretKey secretKey= algorithm.key().build();
         return secretKey;
+    }
+
+    @Bean
+    public NetHttpTransport getHttpTransport() {
+        return new NetHttpTransport();
+    }
+
+    @Bean
+    public GsonFactory getGsonFactory() {
+        return GsonFactory.getDefaultInstance();
     }
 }

@@ -2,7 +2,7 @@ package com.scaler.myfirstspringbootproj.Controller;
 
 import com.scaler.myfirstspringbootproj.DTO.CreateUserRequest;
 import com.scaler.myfirstspringbootproj.DTO.ErrorDto;
-import com.scaler.myfirstspringbootproj.DTO.UserDto;
+import com.scaler.myfirstspringbootproj.DTO.CreateNewUserRequestDto;
 import com.scaler.myfirstspringbootproj.DTO.UserResponseDto;
 import com.scaler.myfirstspringbootproj.ExceptionHandling.UserNotFoundException;
 import com.scaler.myfirstspringbootproj.Service.UserService;
@@ -22,14 +22,16 @@ public class UserController {
         this.userService = userService;
     }
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<User> createUser(@RequestBody CreateNewUserRequestDto createNewUserRequestDto) {
 
         CreateUserRequest createUserRequest = new CreateUserRequest(
-                userDto.getUserName(),
-                userDto.getEmail(),
-                userDto.getGender(),
-                userDto.getPassword(),
-                userDto.getRole()
+                createNewUserRequestDto.getUserName(),
+                createNewUserRequestDto.getEmail(),
+                createNewUserRequestDto.getGender(),
+                createNewUserRequestDto.getPassword(),
+                createNewUserRequestDto.getRole(),
+                createNewUserRequestDto.getRegistrationProvider(),
+                createNewUserRequestDto.getGoogleId()
         );
 
         User user = userService.createUser(createUserRequest);
